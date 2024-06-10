@@ -1,0 +1,19 @@
+﻿@model ErrorViewModel
+
+
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+        <h1><strong>@Model.StatusCode</strong></h1>
+
+    <p><strong>@Model.ErrorMessage</strong></p>
+}
+
+@if (Model == null)
+{
+    <p>ErrorViewModel is null.</p>
+}
+else
+{
+    <p>Error ID: <strong>@Model.RequestId</strong></p>
+}

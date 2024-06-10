@@ -1,0 +1,133 @@
+﻿@model TP_FINAL_GRUPO_C.Models.Usuario;
+
+@{
+    ViewData["Title"] = "Mi Perfil";
+}
+
+<div class="container">
+    <h2 class="mt-5 mb-4">Perfil de Usuario</h2>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Información Personal</h5>
+                    <p class="card-text">Nombre: @Model.Nombre</p>
+                    <p class="card-text">Apellido: @Model.Apellido</p>
+                    <p class="card-text">DNI: @Model.DNI</p>
+                    <p class="card-text">Email: @Model.Mail</p>
+                    <p class="card-text">Fecha de Nacimiento: @Model.FechaNacimiento.ToString("dd/MM/yyyy")</p>
+                </div>
+                <div class="card-footer text-right">
+                    <a href="@Url.Action("Edit", "MiPerfil")" class="btn btn-primary">Editar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mi Crédito: @Model.Credito</h5>
+                    <div class="text-right">
+                        <a href="@Url.Action("BuyCredit", "MiPerfil")" class="btn btn-primary">Comprar crédito</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mt-5 mb-3">Funciones Actuales:</h3>
+    <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sala</th>
+                        <th>Película</th>
+                        <th>Fecha</th>
+                        <th>Costo</th>
+                <th>Cantidad Entradas Compradas</th>
+                        <th>Acciones</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var funcion in ViewData["funcionesProximas"] as List<Funcion>)
+                        {
+                            <tr>
+                                <td>@Html.DisplayFor(modelItem => funcion.ID)</td>
+                                <td>@Html.DisplayFor(modelItem => funcion.MiSala.Ubicacion)</td>
+                                <td>@Html.DisplayFor(modelItem => funcion.MiPelicula.Nombre)</td>
+                                <td>@Html.DisplayFor(modelItem => funcion.Fecha)</td>
+                                <td>$@Html.DisplayFor(modelItem => funcion.Costo)</td>
+
+                                @foreach (var uf in ViewData["entradasPorFuncion"] as List<UsuarioFuncion>)
+                                {
+                                    if(uf.idFuncion == funcion.ID)
+                                    {
+                                        <td>@Html.DisplayFor(modelItem => uf.CantidadEntradasCompradas)</td>
+                                        break;
+                                    }
+                         }
+                                <td>
+                                    <a href="#" class="btn btn-primary" onclick="devolverEntradas('@funcion.ID','@Model.ID')">Devolver Entrada</a>
+                                </td>
+                            </tr>
+                        }
+                </tbody>
+     </table>
+
+    <h3 class="mt-5 mb-3">Funciones Pasadas:</h3>
+    <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sala</th>
+                        <th>Película</th>
+                        <th>Fecha</th>
+                        <th>Asientos Disponibles</th>
+                        <th>Costo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var funcion in ViewData["funcionesPasadas"] as List<Funcion>)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => funcion.ID)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.MiSala.Ubicacion)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.MiPelicula.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.Fecha)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.AsientosDisponibles)</td>
+                            <td>$@Html.DisplayFor(modelItem => funcion.Costo)</td>                                                                     
+                        </tr>
+                    }
+                </tbody>
+     </table>
+     
+</div>
+
+@section scripts
+    {
+    <script>
+
+        function devolverEntradas(idFuncion, idUsuario){
+            console.log("aca")
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("DevolverEntrada","Usuarios")',
+                data: { idFuncion: idFuncion, idUsuario: idUsuario },
+                success: function(response){
+                    let status = response.statusCode
+                    if(status === 200){
+                        alert("Se devolvieron las entradas")
+                    }else{
+                        alert(response.errorMessage)
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("Error al procesar la compra de entradas");
+                }
+            })
+        }
+       
+          
+    </script>
+    }

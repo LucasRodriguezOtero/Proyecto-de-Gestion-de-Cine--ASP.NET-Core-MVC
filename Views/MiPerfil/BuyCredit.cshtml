@@ -1,0 +1,15 @@
+﻿@model TP_FINAL_GRUPO_C.Models.Usuario
+
+@{
+    ViewData["Title"] = "Cargar Crédito";
+}
+
+<h2>Cargar Crédito</h2>
+
+<form asp-controller="MiPerfil" asp-action="ProcesarCargarCredito" method="post">
+    <div class="form-group">
+        <label for="monto">Monto a cargar:</label>
+        <input type="number" class="form-control" id="monto" name="monto" required>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Cargar</button>
+</form>

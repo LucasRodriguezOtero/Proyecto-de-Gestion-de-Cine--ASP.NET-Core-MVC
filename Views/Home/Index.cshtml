@@ -1,0 +1,242 @@
+﻿@model IEnumerable<TP_FINAL_GRUPO_C.Models.Funcion>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-5">
+    <div class="modal fade" id="comprarEntradaModal" tabindex="-1" aria-labelledby="comprarEntradaModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="comprarEntradaModalLabel">Comprar Entrada</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="closeModal()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                   
+                    <p id="entradaContent">Contenido de la entrada</p>
+                  
+                    <label for="cantidadEntradas">Cantidad de Entradas (máximo 5):</label>
+                    <input type="number" id="cantidadEntradas" name="cantidadEntradas" min="1" max="5">
+                </div>
+                <div class="modal-footer">
+                    <a href="@Url.Action("BuyCredit", "MiPerfil")" class="btn btn-outline-primary" onclick="cargarCredito()">Cargar Crédito</a>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="comprarEntradas()">Comprar Entrada</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1 class="mb-3 mt-5">Cartelera Disponible</h1>
+    <h2>Bienvenido @User.FindFirst("Nombre")?.Value!</h2>
+    <!-- Formulario de Busqueda -->
+    <div class="filter-bar mb-5 mb-3">
+        <div class="filter-input">
+            <form method="get" action="@Url.Action("Index")">
+                <label for="ubicacion" class="filter-label">Ubicación:</label>
+                
+                
+                <select id="ubicacion" name="ubicacion">
+                    @foreach (var sala in ViewData["Salas"] as List<Sala>)
+                    {
+                        <option value="@sala.Ubicacion">@sala.Ubicacion</option>
+                    }
+                </select>
+
+                <label for="fecha" class="filter-label">Fecha:</label>
+                <input type="date" id="fecha" name="fecha">
+
+                <label for="precioMin" class="filter-label">Precio Min:</label>
+                <input type="number" id="precioMin" name="precioMin">
+
+                <label for="precioMax" class="filter-label">Precio Max:</label>
+                <input type="number" id="precioMax" name="precioMax">
+
+                <label for="pelicula" class="filter-label">Pelicula:</label>
+                <input type="text" id="pelicula" name="pelicula">
+
+                <button type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <ul class="nav nav-tabs" id="myTabs">
+        <li class="nav-item">
+            <a class="nav-link active" id="funciones-tab" data-toggle="tab" href="#funciones">Funciones</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="peliculas-tab" data-toggle="tab" href="#peliculas">Peliculas</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="salas-tab" data-toggle="tab" href="#salas">Salas</a>
+        </li>
+    </ul>
+
+    <!-- Tab content -->
+    <!-- Funciones Tab -->
+
+    <div class="tab-content mt-3">
+        <div class="tab-pane fade show active" id="funciones">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sala</th>
+                        <th>Película</th>
+                        <th>Fecha</th>
+                        <th>Asientos Disponibles</th>
+                        <th>Costo</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var funcion in ViewData["Funciones"] as List<Funcion>)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => funcion.ID)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.MiSala.Ubicacion)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.MiPelicula.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.Fecha)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.AsientosDisponibles)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.Costo)$</td>
+                            <td>
+                                <a href="#" class="btn btn-primary" onclick="openModal('@funcion.MiSala.Ubicacion','@funcion.MiPelicula.Nombre'
+                                ,'@funcion.MiPelicula.Duracion', '@funcion.Fecha','@funcion.AsientosDisponibles','@funcion.ID','@funcion.Costo')">Comprar Entradas</a>
+                            </td>                            
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Películas Tab -->
+        <div class="tab-pane fade" id="peliculas">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Sinopsis</th>
+                        <th>Duración</th>
+                        <th>Acciones</th> 
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pelicula in ViewData["Peliculas"] as List<Pelicula>)
+                    {
+                        <tr>
+                            <td>@pelicula.ID</td>
+                            <td>@pelicula.Nombre</td>
+                            <td>@pelicula.Sinopsis</td>
+                            <td>@pelicula.Duracion</td>
+                            <td>
+                                <a asp-action="VerFuncionesPelicula" asp-route-peliculaId="@pelicula.ID" class="btn btn-primary">Ver Funciones</a>
+                            </td> 
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Salas Tab -->
+        <div class="tab-pane fade" id="salas">
+           
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Ubicación</th>
+                        <th>Capacidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var sala in ViewData["Salas"] as List<Sala>)
+                    {
+                        <tr>
+                            <td>@sala.ID</td>
+                            <td>@sala.Ubicacion</td>
+                            <td>@sala.Capacidad</td>
+                            <td>
+                                <a asp-action="VerFuncionesSala" asp-route-salaId="@sala.ID" class="btn btn-primary">Ver Funciones</a>
+                            </td> 
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <script>
+        // Script para cambiar de tab al hacer clic
+        $(document).ready(function () {
+            $('#myTabs a').on('click', function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+        });
+
+        function closeModal() {
+            $('#comprarEntradaModal').modal('hide');
+        }
+
+        function openModal(ubicacion, pelicula, duracion, fecha, asientosDisponibles, idfuncion, costo) {
+            $('#entradaContent').data('funcionId', idfuncion);
+
+            var cardHtml = `
+                <div class="card">
+                            <div class="card-header card-title">
+                        ${pelicula}
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Duración: ${duracion} horas</p>
+                        <p class="card-text">Ubicación: ${ubicacion}</p>
+                        <p class="card-text">Fecha: ${fecha}</p>
+                        <p class="card-text">Asientos disponibles: ${asientosDisponibles}</p>
+                        <p class="card-text">Costo: $ ${costo}</p>                      
+                    </div>
+                </div>
+            `;
+
+            $('#entradaContent').html(cardHtml);
+            $('#comprarEntradaModal').modal('show');
+        }
+        function comprarEntradas() {
+            var idFuncion = $('#entradaContent').data('funcionId');
+            var cantidadEntradas = $('#cantidadEntradas').val();
+
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("ComprarEntrada", "Usuarios")',
+                data: { idFuncion: idFuncion, cantidadEntradas: cantidadEntradas },
+                success: function (response) {
+                    let status = response.statusCode
+                    if (status === 200) {
+                        alert("Compra realizada con éxito");
+                        closeModal();
+                    } else {
+                        if(status === 402){
+                            alert("Crédito insuficiente");
+
+                        }else if(status === 405){
+                            console.error(response.errorMessage)
+                            alert("No se pudo realizar la cmopra de entradas");
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr.responseText);
+                    alert("Error al procesar la compra de entradas");
+                }
+            });
+
+            closeModal();
+        }
+      
+    </script>
+}

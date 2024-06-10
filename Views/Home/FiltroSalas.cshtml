@@ -1,0 +1,56 @@
+﻿@model IEnumerable<TP_FINAL_GRUPO_C.Models.Funcion>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-3 mt-5">Catalogo</h1>
+
+    <!-- Tab content -->
+    <div class="tab-content mt-3">
+        <!-- Funciones Tab -->
+        <div class="tab-pane fade show active" id="funciones">
+            <!-- Contenido de la tabla de Funciones -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sala</th>
+                        <th>Película</th>
+                        <th>Fecha</th>
+                        <th>Asientos Disponibles</th>
+                        <th>Costo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var funcion in ViewData["FuncionesFiltradas"] as List<Funcion>)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => funcion.ID)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.MiSala.Ubicacion)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.MiPelicula.Nombre)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.Fecha)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.AsientosDisponibles)</td>
+                            <td>@Html.DisplayFor(modelItem => funcion.Costo)$</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+@section scripts
+    {
+    <script>
+        // Script para cambiar de tab al hacer clic
+        $(document).ready(function () {
+            $('#myTabs a').on('click', function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            });
+        });
+    </script>
+}
