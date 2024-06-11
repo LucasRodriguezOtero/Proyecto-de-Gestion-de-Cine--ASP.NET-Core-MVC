@@ -1,6 +1,6 @@
 # Proyecto de Gestión de Cine - ASP.NET Core MVC
 
-Este repositorio contiene un proyecto academico evolutivo de gestión de cine desarrollado utilizando ASP.NET Core MVC y Entity Framework Core como ORM para la persistencia de datos.
+Este repositorio contiene un proyecto academico evolutivo de gestión de cine desarrollado utilizando ASP.NET Core MVC y Entity Framework Core como ORM.
 Version anterior: `https://github.com/LucasRodriguezOtero/CineManagerEF`
 
 ## Descripción del Proyecto
